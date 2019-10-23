@@ -52,14 +52,40 @@ public class BST<Key extends Comparable<Key>, Value> {
         return x;
     }
 
+    public Key min(){
+        return min(root).key;
+    }
+
+    private Node min(Node x){
+        if (x.left == null) return x;
+        else return min(x.left);
+    }
+
+    public Key floor(Key key){
+        Node x = floor(root, key);
+        if (x == null) return null;
+        return x.key;
+    }
+
+    private Node floor(Node x, Key key){
+        if (x == null) return null;
+        int cmp = key.compareTo(x.key);
+        if (cmp == 0) return x;
+        if (cmp < 0) return floor(x.left, key);
+        Node t = floor(x.right, key);
+        if (t == null) return x;
+        else return t;
+    }
+
     public static void main(String[] args){
         BST<Integer, String> bst = new BST<Integer, String>();
         bst.put(2,"a");
         bst.put(1,"b");
         bst.put(4,"c");
-        bst.put(5,"d");
+        bst.put(6,"d");
         bst.put(3,"e");
         System.out.println(bst.get(3));
-
+        System.out.println(bst.floor(5));
+        System.out.println(bst.min());
     }
 }
