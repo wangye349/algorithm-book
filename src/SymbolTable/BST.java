@@ -61,6 +61,15 @@ public class BST<Key extends Comparable<Key>, Value> {
         else return min(x.left);
     }
 
+    public Key max(){
+        return max(root).key;
+    }
+
+    private Node max(Node x){
+        if (x.right == null) return x;
+        else return max(x.right);
+    }
+
     public Key floor(Key key){
         Node x = floor(root, key);
         if (x == null) return null;
@@ -77,6 +86,22 @@ public class BST<Key extends Comparable<Key>, Value> {
         else return t;
     }
 
+    public Key ceiling(Key key){
+        Node x = ceiling(root, key);
+        if (x == null) return null;
+        else return x.key;
+    }
+
+    public Node ceiling(Node x, Key key){
+        if (x == null) return null;
+        int cmp = key.compareTo(x.key);
+        if (cmp == 0) return x;
+        if (cmp > 0) return ceiling(x.right, key);
+        Node t = ceiling(x.left, key);
+        if (t == null) return x;
+        else return t;
+    }
+
     public static void main(String[] args){
         BST<Integer, String> bst = new BST<Integer, String>();
         bst.put(2,"a");
@@ -87,5 +112,7 @@ public class BST<Key extends Comparable<Key>, Value> {
         System.out.println(bst.get(3));
         System.out.println(bst.floor(5));
         System.out.println(bst.min());
+        System.out.println(bst.max());
+        System.out.println(bst.ceiling(5));
     }
 }
