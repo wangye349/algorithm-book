@@ -1,6 +1,7 @@
 package SymbolTable;
 
 import com.sun.jdi.Value;
+import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.StdIn;
 
 import javax.swing.*;
@@ -58,7 +59,7 @@ public class BST<Key extends Comparable<Key>, Value> {
 
     private Node min(Node x){
         if (x.left == null) return x;
-        else return min(x.left);
+        return min(x.left);
     }
 
     public Key max(){
@@ -102,6 +103,80 @@ public class BST<Key extends Comparable<Key>, Value> {
         else return t;
     }
 
+    public Key select(int k){
+        return select(root, k).key;
+    }
+
+    private Node select(Node x, int k){
+        if (x == null) return null;
+        if (size(x.left) == k) return x;
+        else if (size(x.left) > k) return select(x.left, k);
+        else return select(x.right, k - size(x.left) - 1);
+    }
+
+    public int rank(Key key){
+        return rank(root, key);
+    }
+
+    private int rank(Node x, Key key){
+        if (x == null) return 0;
+        int cmp = key.compareTo(x.key);
+        if (cmp < 0) return rank(x.left, key);
+        else if(cmp > 0) return rank(x.right, key) + x.left.N + 1;
+        else return x.left.N + 1;
+    }
+
+    public void deleteMin(){
+        root = deleteMin(root);
+    }
+
+    private Node deleteMin(Node x){
+        if (x.left == null) return x.right;
+        x.left = deleteMin(x.left);
+        x.N = size(x.left) + size(x.right) + 1;
+        return x;
+    }
+
+    public void delete(Key key){
+        root = delete(root, key);
+    }
+
+    private Node delete(Node x, Key key){
+        if (x == null) return null;
+        int cmp = key.compareTo(x.key);
+        if (cmp < 0) x.left = delete(x.left, key);
+        else if (cmp > 0) x.right = delete(x.right, key);
+        else{
+            if (x.right == null) return x.left;
+            if (x.left == null) return x.right;
+            Node t = x;
+            x = min(t.right);
+            x.right = deleteMin(x.right);
+            x.left = t.left;
+        }
+        x.N = size(x.left) + size(x.right) + 1;
+        return x;
+    }
+
+    public Iterable<Key> keys(){
+        return keys(min(), max());
+    }
+
+    public Iterable<Key> keys(Key lo, Key hi){
+        Queue<Key> queue = new Queue<Key>();
+        keys(root, queue, lo, hi);
+        return queue;
+    }
+
+    private void keys(Node x, Queue<Key> queue, Key lo, Key hi){
+        if (x == null) return;
+        int cmplo = lo.compareTo(x.key);
+        int cmphi = hi.compareTo(x.key);
+        if (cmplo < 0) keys(x.left, queue, lo, hi);
+        if (cmplo <= 0 && cmphi >= 0) queue.enqueue(x.key);
+        if (cmphi > 0) keys(x.right, queue, lo, hi);
+    }
+
     public static void main(String[] args){
         BST<Integer, String> bst = new BST<Integer, String>();
         bst.put(2,"a");
@@ -114,5 +189,10 @@ public class BST<Key extends Comparable<Key>, Value> {
         System.out.println(bst.min());
         System.out.println(bst.max());
         System.out.println(bst.ceiling(5));
+        System.out.println(bst.select(3));
+        System.out.println(bst.rank(4));
+        bst.delete(1);
+        System.out.println(bst.min());
+        System.out.println((bst.keys(2, 4)));
     }
 }
