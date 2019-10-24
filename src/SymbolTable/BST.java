@@ -109,9 +109,9 @@ public class BST<Key extends Comparable<Key>, Value> {
 
     private Node select(Node x, int k){
         if (x == null) return null;
-        if (size(x.left) == k) return x;
-        else if (size(x.left) > k) return select(x.left, k);
-        else return select(x.right, k - size(x.left) - 1);
+        if (size(x.left) > k) return select(x.left, k);
+        else if (size(x.left) < k) return select(x.right, k - size(x.left) - 1);
+        else return x;
     }
 
     public int rank(Key key){
@@ -158,6 +158,38 @@ public class BST<Key extends Comparable<Key>, Value> {
         return x;
     }
 
+    public void deleteMax(){
+        root = deleteMax(root);
+    }
+
+    private Node deleteMax(Node x){
+        if (x.right == null) return x.left;
+        x.right = deleteMax(x.right);
+        x.N = size(x.left) + size(x.right) + 1;
+        return x;
+    }
+
+    public void deletebasemax(Key key){
+        root = deletebasemax(root, key);
+    }
+
+    private Node deletebasemax(Node x, Key key){
+        if (x == null) return null;
+        int cmp = key.compareTo(x.key);
+        if (cmp < 0) x.left = deletebasemax(x.left, key);
+        else if (cmp > 0) x.right = deletebasemax(x.right, key);
+        else {
+            if (x.left == null) return x.right;
+            if (x.right == null) return x.left;
+            Node t = x;
+            x = max(t.left);
+            x.left = deleteMax(x.left);
+            x.right = t.right;
+        }
+        x.N = size(x.left) + size(x.right) + 1;
+        return x;
+    }
+
     public Iterable<Key> keys(){
         return keys(min(), max());
     }
@@ -184,15 +216,15 @@ public class BST<Key extends Comparable<Key>, Value> {
         bst.put(4,"c");
         bst.put(6,"d");
         bst.put(3,"e");
-        System.out.println(bst.get(3));
-        System.out.println(bst.floor(5));
-        System.out.println(bst.min());
-        System.out.println(bst.max());
-        System.out.println(bst.ceiling(5));
-        System.out.println(bst.select(3));
-        System.out.println(bst.rank(4));
-        bst.delete(1);
-        System.out.println(bst.min());
-        System.out.println((bst.keys(2, 4)));
+        System.out.println("key 3 's value" + bst.get(3));
+        System.out.println("key 5 's floor" + bst.floor(5));
+        System.out.println("min:" + bst.min());
+        System.out.println("max:" + bst.max());
+        System.out.println("key 5 's ceiling" + bst.ceiling(5));
+        System.out.println("bst.select(3)" + bst.select(3));
+        System.out.println("bst.rank(4)" + bst.rank(4));
+        bst.deletebasemax(1);
+        System.out.println("after delete the min:" + bst.min());
+        System.out.println("keys between 2 and 4 is " + (bst.keys(2, 4)));
     }
 }
