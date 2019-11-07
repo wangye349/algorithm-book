@@ -209,6 +209,14 @@ public class BST<Key extends Comparable<Key>, Value> {
         if (cmphi > 0) keys(x.right, queue, lo, hi);
     }
 
+    public boolean contains(Key key){
+        return contains(root, key);
+    }
+
+    private boolean contains(Node x, Key key){
+        return get(x, key) != null;
+    }
+
     public static void main(String[] args){
         BST<Integer, String> bst = new BST<Integer, String>();
         bst.put(2,"a");
@@ -216,6 +224,7 @@ public class BST<Key extends Comparable<Key>, Value> {
         bst.put(4,"c");
         bst.put(6,"d");
         bst.put(3,"e");
+        System.out.println("bst contains 3" + bst.contains(3));
         System.out.println("key 3 's value" + bst.get(3));
         System.out.println("key 5 's floor" + bst.floor(5));
         System.out.println("min:" + bst.min());
